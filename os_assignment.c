@@ -12,8 +12,9 @@ struct pidValue
 }p[4701];
 int allocate_map(void)     //process id created
 {
-	int j=0;
-	for(int i=MIN_PID;i<=MAX_PID;i++)
+	int j=0,i;
+	printf("Creating data structure.\n");
+	for(i=MIN_PID;i<=MAX_PID;i++)
 	{
 		p[j].pid=i;
 		p[j].flag=0;
@@ -28,8 +29,9 @@ int allocate_map(void)     //process id created
 
 int allocate_pid(void)      //process id allocated
 {
-	int j=0;
-	for(int i=MIN_PID;i<=MAX_PID;i++)
+	int j=0,i;
+	printf("allocating pid to process\n");
+	for(i=MIN_PID;i<=MAX_PID;i++)
 	{
 		if(p[j].flag==0)
 		{
@@ -43,31 +45,37 @@ int allocate_pid(void)      //process id allocated
 
 int release_pid(int pid)      //process id released
 {
-	int j=0;
-	for(int i=MIN_PID;i<MAX_PID;i++)
+	int j=0,i;
+	for(i=MIN_PID;i<MAX_PID;i++)
 	{
 		if(p[j].pid==pid)
 			p[j].flag==0;
 			j++;
 	}
+	printf("Releasing pid %d",pid);
 }
 void *crthread()
 {
+	printf("Entering thread function\n");
 	int r=allocate_pid();
+	printf("PID allocated\n");
 	pthread_mutex_lock(&l1);
 	sleep(7);
 	
 	pthread_mutex_unlock(&l1);
 	release_pid(r);
+	printf("PID released\n");
 }
 
 int main()
 {
 	pthread_t th[100];
-	for(int i=0;i<100;i++)
+	int i;
+	allocate_map();
+	for(i=0;i<100;i++)
 	{
+		printf("Allocating PID to thread %d",i+1);
 	pthread_create(&th[i],NULL,crthread,NULL);
 	pthread_join(th[i],NULL);
     }
-	
 }
